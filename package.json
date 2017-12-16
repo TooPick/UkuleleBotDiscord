@@ -1,0 +1,19 @@
+{
+  "name": "ukulele-bot",
+  "version": "1.0.0",
+  "description": "Music Bot for Discord.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "too_pick",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.2.1",
+    "ffmpeg-binaries": "^3.2.2-3",
+    "opusscript": "0.0.4",
+    "youtube-search": "^1.0.10",
+    "ytdl-core": "^0.18.4"
+  }
+}
