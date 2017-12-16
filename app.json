@@ -1,0 +1,15 @@
+{
+  "apps" : [{
+    "name"        : "ukulele-bot",
+    "script"      : "./app.js",
+    "watch"       : true,
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "env_production" : {
+       "NODE_ENV": "production"
+    },
+    "error_file": "/home/ukulele-logs/ukulele-err.log",
+    "out_file": "/home/ukulele-logs/ukulele-out.log"
+  }]
+}
