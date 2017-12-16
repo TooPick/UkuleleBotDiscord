@@ -15,5 +15,9 @@
     "opusscript": "0.0.4",
     "youtube-search": "^1.0.10",
     "ytdl-core": "^0.18.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TooPick/UkuleleBotDiscord"
   }
 }
