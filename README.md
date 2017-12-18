@@ -17,10 +17,11 @@ Made with [node.js](https://nodejs.org) and [discord.js](https://github.com/hydr
     npm install
 
 #### Configuration
-Edit the `config.js` file :
-- `bot_token` : The token of your Discord Bot, provide by https://discordapp.com/developers.
-- `bot_carac` : Caracter use athe the begining of every commands, by default `!` is used.
-- `youtube_api_key` : Your Youtube API key, used to find songs in Youtube, you can get one here https://console.developers.google.com.
+- Copy the `config.js.dist` file and rename it to `config.js`.
+- Edit the file :
+    - `bot_token` : The token of your Discord Bot, provide by https://discordapp.com/developers.
+    - `bot_carac` : Caracter use athe the begining of every commands, by default `!` is used.
+    - `youtube_api_key` : Your Youtube API key, used to find songs in Youtube, you can get one here https://console.developers.google.com.
 
 ## Commands
 
