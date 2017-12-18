@@ -1,5 +1,5 @@
 module.exports = {
-    bot_token: "MzkwNTYwNDQ5MTg5NTExMTY5.DRL_hg.0zIGYqu2RbJaAv3ujBO_RvDt-oc",
+    bot_token: "MzkwNTYwNDQ5MTg5NTExMTY5.DRlU8g.YK7v5izeM3D7IVQ3g6N27qA3A9c",
     bot_carac: "!",
     youtube_api_key: "AIzaSyCARomDIJXgWOxfhgDaICmA76iZmV05_zk\t",
 }

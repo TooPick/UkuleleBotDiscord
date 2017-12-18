@@ -24,19 +24,27 @@ module.exports = function(client, options){
                 case 'play': return play(msg, suffix);
                 case 'pause': return pause(msg, suffix);
                 case 'resume': return resume(msg, suffix);
-                case 'volume': return volume(msg, suffix);
+                case 'next': return next(msg, suffix);
+                case 'volume' | 'vol': return volume(msg, suffix);
+                case 'clear': return clearQueue(msg, suffix);
                 case 'quit': return quit(msg, suffix);
                 case 'help': return help(msg, suffix);
             }
         }
     });
 
+    /**
+     * Return the music queue of the current server.
+     */
     function getServerQueue(server) {
         // Return the queue.
         if (!musicQueues[server]) musicQueues[server] = [];
         return musicQueues[server];
     }
 
+    /**
+     * Search in Youtube with Youtube API.
+     */
     function youtubeSearch(keywords, maxResults, callback) {
         const opts = {
             maxResults: maxResults,
@@ -46,6 +54,9 @@ module.exports = function(client, options){
         youtubeS(keywords, opts, callback);
     }
 
+    /**
+     * Search a song in Youtube with de provides key words or Youtube link, if a song is already playing, add the song to queue.
+     */
     function play(msg, suffix) {
         // Make sure the user is in a voice channel.
         if (msg.member.voiceChannel === undefined) return msg.channel.send(wrap("Vous n'êtes pas dans un salon vocal !"));
@@ -84,6 +95,9 @@ module.exports = function(client, options){
         });
     }
 
+    /**
+     * Create the audio stream from youtube, and play all songs in the queue.
+     */
     function playQueue(msg, queue) {
         // If the queue is empty, finish.
         if (queue.length === 0) {
@@ -156,6 +170,9 @@ module.exports = function(client, options){
         });
     }
 
+    /**
+     * Pause the current song.
+     */
     function pause(msg, suffix) {
         // Get the voice connection.
         const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id === msg.guild.id);
@@ -167,6 +184,9 @@ module.exports = function(client, options){
         if (!dispatcher.paused) dispatcher.pause();
     }
 
+    /**
+     * Resume the current song.
+     */
     function resume(msg, suffix) {
         // Get the voice connection.
         const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id === msg.guild.id);
@@ -178,6 +198,23 @@ module.exports = function(client, options){
         if (dispatcher.paused) dispatcher.resume();
     }
 
+    /**
+     * Play the next song in the queue.
+     */
+    function next(msg, suffix) {
+        // Get the voice connection.
+        const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id === msg.guild.id);
+        if (voiceConnection === null) return msg.channel.send(wrap('Aucune chanson en cours de lecture.'));
+
+        // Next.
+        msg.channel.send(wrap('Chanson suivante.'));
+
+        voiceConnection.player.dispatcher.end();
+    }
+
+    /**
+     * Set the music volume, beetween 0 and 100.
+     */
     function volume(msg, suffix) {
         // Get the voice connection.
         const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id === msg.guild.id);
@@ -191,6 +228,20 @@ module.exports = function(client, options){
 
         msg.channel.send(wrap("Volume défini à " + suffix));
         dispatcher.setVolume((suffix/100));
+    }
+
+    /**
+     * Clear the current queue.
+     */
+    function clearQueue(msg, suffix) {
+        // Get the voice connection.
+        const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id === msg.guild.id);
+        if (voiceConnection === null) return msg.channel.send(wrap('Aucune chanson en cours de lecture.'));
+
+        const queue = getServerQueue(msg.guild.id);
+        queue.splice(0, queue.length);
+
+        msg.channel.send(wrap("Liste d'attente vidée !"));
     }
 
     function quit(msg, suffix) {
@@ -209,18 +260,26 @@ module.exports = function(client, options){
         }
     }
 
+    /**
+     * Display the commands list.
+     */
     function help(msg, suffix) {
         let helpStr = "";
-        helpStr += "!play [mots_cles] : Recherche une chanson sur YouTube puis l'ajoute à la liste de lecture. \n";
-        helpStr += "!pause : Met en pause la lecture en cours. \n";
-        helpStr += "!resume : Met en lecture la lecture mise en pause. \n";
-        helpStr += "!volume [0-100] : Défini le volume sonore de la lecture (entre 0 et 100). \n";
-        helpStr += "!quit : Stoppe la lecture et le bot sort du salon vocal. \n";
-        helpStr += "!help : Affiche cette fiche d'aide ^^. \n";
+        helpStr += "!play [mots_cles] - Recherche une chanson sur YouTube puis l'ajoute à la liste de lecture. \n";
+        helpStr += "!pause - Met en pause la lecture en cours. \n";
+        helpStr += "!resume - Met en lecture la lecture mise en pause. \n";
+        helpStr += "!next - Passe à la prochaine chanson de la liste d'attente. \n";
+        helpStr += "!volume [0-100] - Défini le volume sonore de la lecture (entre 0 et 100). \n";
+        helpStr += "!clear - Vide la liste d'attente. \n";
+        helpStr += "!quit - Stoppe la lecture et le bot sort du salon vocal. \n";
+        helpStr += "!help - Affiche cette fiche d'aide ^^. \n";
 
         msg.channel.send(wrap(helpStr));
     }
 
+    /**
+     * Wrap the text content for a better display in the text channel.
+     */
     function wrap(text) {
         return '```\n' + text.replace(/`/g, '`' + String.fromCharCode(8203)) + '\n```';
     }
