@@ -25,7 +25,7 @@ module.exports = function(client, options){
                 case 'pause': return pause(msg, suffix);
                 case 'resume': return resume(msg, suffix);
                 case 'next': return next(msg, suffix);
-                case 'volume' | 'vol': return volume(msg, suffix);
+                case 'volume': return volume(msg, suffix);
                 case 'clear': return clearQueue(msg, suffix);
                 case 'quit': return quit(msg, suffix);
                 case 'help': return help(msg, suffix);
