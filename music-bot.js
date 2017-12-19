@@ -48,7 +48,8 @@ module.exports = function(client, options){
     function youtubeSearch(keywords, maxResults, callback) {
         const opts = {
             maxResults: maxResults,
-            key: YOUTUBE_API_KEY
+            key: YOUTUBE_API_KEY,
+            type: 'video',
         };
 
         youtubeS(keywords, opts, callback);
