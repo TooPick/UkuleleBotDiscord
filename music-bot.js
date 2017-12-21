@@ -1,5 +1,6 @@
 const youtubeS = require('youtube-search');
 const ytdl = require('ytdl-core');
+const axios = require('axios');
 
 module.exports = function(client, options){
     // Get all options.
@@ -9,6 +10,8 @@ module.exports = function(client, options){
 
     //List of client Queues
     let musicQueues = [];
+    let isPlaylist = false;
+    let currentPlaylist = null;
 
     client.on('message', msg => {
         const message = msg.content.trim();
@@ -21,6 +24,9 @@ module.exports = function(client, options){
 
             // Process the commands.
             switch (command) {
+                //Playlist
+                case 'playlist': return playlistExec(msg, suffix);
+
                 case 'play': return play(msg, suffix);
                 case 'pause': return pause(msg, suffix);
                 case 'resume': return resume(msg, suffix);
@@ -96,17 +102,25 @@ module.exports = function(client, options){
         });
     }
 
+    module.exports.play = play;
+
     /**
      * Create the audio stream from youtube, and play all songs in the queue.
      */
     function playQueue(msg, queue) {
         // If the queue is empty, finish.
         if (queue.length === 0) {
-            msg.channel.send(wrap("Liste d'attente terminée !"));
+            if(isPlaylist) {
+                msg.channel.send(wrap("Sélection d'une chanson aléatoire dans la playlist !"));
+                playPlaylist(msg, currentPlaylist);
+                return;
+            } else {
+                msg.channel.send(wrap("Liste d'attente terminée !"));
 
-            // Leave the voice channel.
-            const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id === msg.guild.id);
-            if (voiceConnection !== null) return voiceConnection.disconnect();
+                // Leave the voice channel.
+                const voiceConnection = client.voiceConnections.find(val => val.channel.guild.id === msg.guild.id);
+                if (voiceConnection !== null) return voiceConnection.disconnect();
+            }
         }
 
         new Promise((resolve, reject) => {
@@ -138,13 +152,6 @@ module.exports = function(client, options){
                 let dispatcher = connection.playStream(ytdl(song.link, {filter: 'audioonly'}), {seek: 0, volume: (DEFAULT_VOLUME/100)});
 
                 connection.on('error', (error) => {
-                    // Skip to the next song.
-                    console.log(error);
-                    queue.shift();
-                    playQueue(msg, queue);
-                });
-
-                dispatcher.on('error', (error) => {
                     // Skip to the next song.
                     console.log(error);
                     queue.shift();
@@ -276,6 +283,66 @@ module.exports = function(client, options){
         helpStr += "!help - Affiche cette fiche d'aide ^^. \n";
 
         msg.channel.send(wrap(helpStr));
+    }
+
+
+    /****************************************************************************************
+     ****************************************************************************************
+     ****************************************************************************************/
+
+    function playlistExec(msg, suffix) {
+
+        const command = suffix.split(' ')[0].trim();
+        const params = suffix.substring(command.length).trim();
+
+        switch (command) {
+            case 'stop':
+                return stopPlaylist(msg, params);
+            case 'play':
+                return playPlaylist(msg, params);
+            case 'list':
+                return listPlaylist(msg, params);
+        }
+    }
+
+    function playPlaylist(msg, params) {
+        axios.get(options.api_url + '/playlists/slug/' + params, { headers: { Authorization: options.api_token } }).then(function (response) {
+            if(response !== null) {
+                msg.channel.send(wrap(`Lecture de la playlist ${response.data.name}`));
+                isPlaylist = true;
+                currentPlaylist = params;
+
+                let songs = response.data.songs;
+                let randomIndex = Math.floor(Math.random() * (songs.length - 0));
+                let playSong = songs[randomIndex];
+                play(msg, playSong.url);
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    function listPlaylist(msg, params) {
+        axios.get(options.api_url + '/playlists', { headers: { Authorization: options.api_token } }).then(function (response) {
+            let list = "";
+            for(let i = 0; i < response.data.length; i++) {
+                let playlist = response.data[i];
+                list = list + `- ${playlist.name} (${playlist.songs.length}) : ${playlist.slug}\n`;
+            }
+
+            msg.channel.send(wrap(list));
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    function stopPlaylist(msg, params) {
+        if(isPlaylist) {
+            msg.channel.send(wrap('Lecture de la playlist arrêtée'));
+            isPlaylist = false;
+            currentPlaylist = null;
+            quit(msg, params);
+        }
     }
 
     /**
