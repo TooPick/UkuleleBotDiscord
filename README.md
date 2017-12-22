@@ -6,6 +6,7 @@ Bot made to play Youtube music on a Discord server.
 Made with [node.js](https://nodejs.org) and [discord.js](https://github.com/hydrabolt/discord.js).
 
 **Dependencies**
+- [axios](https://www.npmjs.com/package/axios)
 - [ffmpeg-binaries](https://www.npmjs.com/package/ffmpeg-binaries)
 - [opusscript](https://www.npmjs.com/package/opusscript)
 - [youtube-search](https://www.npmjs.com/package/youtube-search)

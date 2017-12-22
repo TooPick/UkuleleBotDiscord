@@ -10,4 +10,4 @@
 package-lock.json
 
 # Local config file
-config.js
+options.js
