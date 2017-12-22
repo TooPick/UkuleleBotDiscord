@@ -25,42 +25,58 @@ Made with [node.js](https://nodejs.org) and [discord.js](https://github.com/hydr
 
 ## Commands
 
-### Play
-Search a song in Youtube with de provides key words or Youtube link, if a song is already playing, add the song to queue.
+### Music
+##### Play
+Search a Youtube song by keywords or url and play it.
 
     !play <key_words | youtube_link>
 
-### Pause
-Pause the current song.
+##### Pause
+Pause the current playing song.
 
     !pause
 
-### Resume
-Resume the current song.
+##### Resume
+Resume the current playing song.
 
     !resume
 
-### Next
+##### Next
 Play the next song in the queue.
 
     !next
     
-### Volume
-Set the music volume, beetween 0 and 100.
+##### Volume
+Set the volume to the value passed from 0 to 100.
 
     !volume <0-100>
+        or
+    !vol <0-100>
 
-### Clear
+##### Clear
 Clear the current queue.
 
     !clear
     
-### Quit
-Stop the current song and the bot leave the current voice channel.
+##### Quit or Stop
+Stop the current song or playlist and the bot leave the current voice channel.
 
-    !quit <0-100>
+    !quit
+        or
+    !stop
     
-### Help
+##### Help
 Display a list of all commands.
 
     !help
+
+### Playlists
+##### Playlist play
+Play the playlist passed in params. If it exist in the database.
+
+    !playlist play <playlist_name>
+
+##### Playlist list
+List all the playlist available in the server.
+
+    !playlist list
