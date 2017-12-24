@@ -18,6 +18,9 @@ const MusicNextCmd = require('./command/music/next');
 const PlaylistPlayCmd = require('./command/playlist/playlist-play');
 const PlaylistListCmd = require('./command/playlist/playlist-list');
 
+//      Easter Egg commands
+const YenniCmd = require('./command/easter-egg/yenni');
+
 // Init the Discord Bot
 const Bot = new Discord.Client();
 
@@ -45,6 +48,9 @@ commandManager.loadCommand(new MusicNextCmd(player));
 //      Playlist commands
 commandManager.loadCommand(new PlaylistPlayCmd(player, botApiManager));
 commandManager.loadCommand(new PlaylistListCmd(botApiManager));
+
+//      Easter Egg commands
+commandManager.loadCommand(new YenniCmd(player));
 
 console.log("Commands loaded !");
 

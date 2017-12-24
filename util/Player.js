@@ -1,5 +1,6 @@
 const Message = require('./Message');
 const ytdl = require('ytdl-core');
+const path = require('path');
 
 module.exports = class Player {
     constructor(Bot, botApiManager) {
@@ -9,6 +10,7 @@ module.exports = class Player {
         this.DEFAULT_VOLUME = 50;
         this.playlists = [];
         this.botApiManager = botApiManager;
+        this.resourcesDir = path.join(__dirname, '../resources');
     }
 
     addToQueue(serverId, song) {
@@ -162,6 +164,54 @@ module.exports = class Player {
         }
     }
 
+    playFile(msg, file) {
+        new Promise((resolve, reject) => {
+            // Join the voice channel if not already in one.
+            const voiceConnection = this.Bot.voiceConnections.find(val => val.channel.guild.id === msg.guild.id);
+
+            if (voiceConnection === null) {
+                // Check if the user is in a voice channel.
+                if (msg.member.voiceChannel) {
+                    msg.member.voiceChannel.join().then(connection => {
+                        resolve(connection);
+                    }).catch((error) => {
+                        console.log(error);
+                    });
+                } else {
+                    reject();
+                }
+            } else {
+                resolve(voiceConnection);
+            }
+        }).then(connection => {
+            msg.channel.send(Message.wrap(":yenni:"));
+
+            let dispatcher = connection.playFile(path.join(this.resourcesDir, file), {seek: 0, volume: (this.getServerVolume(msg.guild.id)/100)});
+
+            connection.on('error', (error) => {
+                // Skip to the next song.
+                console.log(error);
+                this.shiftQueue(msg.guild.id);
+                this.playQueue(msg);
+            });
+
+            dispatcher.on('end', () => {
+                // Wait a second.
+                setTimeout(() => {
+                    if (this.queueSize(msg.guild.id) > 0) {
+                        // Remove the song from the queue.
+                        this.shiftQueue(msg.guild.id);
+                        // Play the next song in the queue.
+                        this.playQueue(msg);
+                    }
+                }, 1000);
+            });
+
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
     pause(msg) {
         // Get the voice connection.
         const voiceConnection = this.Bot.voiceConnections.find(val => val.channel.guild.id === msg.guild.id);
@@ -218,7 +268,9 @@ module.exports = class Player {
         // Get the dispatcher
         const dispatcher = voiceConnection.player.dispatcher;
 
-        dispatcher.setVolume((value/100));
-        msg.channel.send(Message.wrap(`Volume défini à ${value}`));
+        if(dispatcher) {
+            dispatcher.setVolume((value/100));
+            msg.channel.send(Message.wrap(`Volume défini à ${value}`));
+        }
     }
 };

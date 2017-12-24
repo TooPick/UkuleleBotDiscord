@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "setup": "node setup.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "too_pick",
@@ -12,6 +13,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "discord.js": "^11.2.1",
+    "dotenv": "^4.0.0",
     "ffmpeg-binaries": "^3.2.2-3",
     "opusscript": "0.0.4",
     "youtube-search": "^1.0.10",
