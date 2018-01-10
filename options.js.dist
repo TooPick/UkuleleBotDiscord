@@ -1,7 +1,7 @@
 module.exports = {
     prefix: '!',
-    youtube_api_key: "AIzaSyCARomDIJXgWOxfhgDaICmA76iZmV05_zk\t",
-    bot_token: "MzkyMzA0Mzk2NzEwNDQ1MDU2.DRlRdw.ZqzTzdUxIHBhBJhRSTvqqIrp2ok",
+    youtube_api_key: "",
+    bot_token: "",
     bot_api_username: "",
     bot_api_password: "",
     bot_api_endpoint: "http://ukulele.cah-en-ligne.fr/api",
