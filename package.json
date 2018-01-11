@@ -14,10 +14,10 @@
     "axios": "^0.17.1",
     "discord.js": "^11.2.1",
     "dotenv": "^4.0.0",
-    "ffmpeg-binaries": "^3.2.2-3",
+    "ffmpeg-binaries": "^3.2.2",
     "opusscript": "0.0.4",
     "youtube-search": "^1.0.10",
-    "ytdl-core": "^0.18.4"
+    "ytdl-core": "^0.18.7"
   },
   "repository": {
     "type": "git",
